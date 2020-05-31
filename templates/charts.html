@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="description" content="" />
+        <meta name="author" content="" />
+        <title>{{title}}</title>
+        <link href="{{url_for('static',filename='css/styles.css')}}" rel="stylesheet" />
+        <link href="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css" rel="stylesheet" crossorigin="anonymous" />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/js/all.min.js" crossorigin="anonymous"></script>
+    </head>
+    <body class="sb-nav-fixed">
+        <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
+            <a class="navbar-brand" href="index.html">TEAMAX</a><button class="btn btn-link btn-sm order-1 order-lg-0" id="sidebarToggle" href="#"><i class="fas fa-bars"></i></button
+            ><!-- Navbar Search-->
+            <form class="d-none d-md-inline-block form-inline ml-auto mr-0 mr-md-3 my-2 my-md-0">
+                <div class="input-group">
+                    <input class="form-control" type="text" placeholder="Search for..." aria-label="Search" aria-describedby="basic-addon2" />
+                    <div class="input-group-append">
+                        <button class="btn btn-primary" type="button"><i class="fas fa-search"></i></button>
+                    </div>
+                </div>
+            </form>
+            <!-- Navbar-->
+            <ul class="navbar-nav ml-auto ml-md-0">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" id="userDropdown" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>
+                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
+                        <a class="dropdown-item" href="#">Settings</a><a class="dropdown-item" href="#">Activity Log</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="login.html">Logout</a>
+                    </div>
+                </li>
+            </ul>
+        </nav>
+        <div id="layoutSidenav">
+            <div id="layoutSidenav_nav">
+                <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
+                    <div class="sb-sidenav-menu">
+                        <div class="nav">
+                            <div class="sb-sidenav-menu-heading">Addons</div>
+                            <a class="nav-link" href="/"
+                                ><div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+                                SimpleSearchingBox</a
+                            ><a class="nav-link" href="/searchingList"
+                                ><div class="sb-nav-link-icon"><i class="fas fa-table"></i></div>
+                                SearchingList</a
+                            >
+                        </div>
+                    </div>
+                </nav>
+            </div>
+            <div id="layoutSidenav_content">
+                <main>
+                    <div class="container-fluid">
+                        <h1 class="mt-4">"{{selected_brand}}사"의 "{{selected_model}}제품"에 대한 디테일입니다.</h1>
+                        <div class="card mb-4">
+                            <div class="card-body">실제 리뷰, 평점, 긍부정 분포와 이슈를 확인할 수 있습니다.</div>
+                        </div>
+                        <div class="card mb-4">
+                            <div class="card-header"><i class="fas fa-table mr-1"></i>실제 리뷰</div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                        <thead>
+                                            <tr>
+                                                <th>ID</th>
+                                                <th>리뷰</th>
+                                                <th>평점</th>
+                                            </tr>
+                                        </thead>
+                                        <tfoot>
+                                            <tr>
+                                                <th>제조회사</th>
+                                                <th>상품명</th>
+                                                <th>평점</th>
+                                            </tr>
+                                        </tfoot>
+                                        <tbody>
+                                            {% for db in selected_rows %}
+                                            <tr>
+                                                <td>{{db['cn_id']}}</td>
+                                                <td>{{db['review']}}</td>
+                                                <td>{{db['score']}}/5.0</td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <div class="card mb-4">
+                                    <div class="card-header"><i class="fas fa-chart-bar mr-1"></i>평점 분포</div>
+                                    <div class="card-body" id = "chart"><canvas id="myBarChart" width="100%" height="50"></canvas></div>
+                                    <div class="card-footer small text-muted">Updated yesterday at 11:59 PM</div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="card mb-4">
+                                    <div class="card-header"><i class="fas fa-chart-pie mr-1"></i>긍부정 분석 "배송"</div>
+                                    <div class="card-body"><canvas id="myPieChart_Deliver" width="100%" height="50"></canvas></div>
+                                    <div class="card-footer small text-muted">Updated yesterday at 11:59 PM</div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="card mb-4">
+                                    <div class="card-header"><i class="fas fa-chart-pie mr-1"></i>긍부정 분석 "상품"</div>
+                                    <div class="card-body"><canvas id="myPieChart_Product" width="100%" height="50"></canvas></div>
+                                    <div class="card-footer small text-muted">Updated yesterday at 11:59 PM</div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="card mb-4">
+                                    <div class="card-header"><i class="fas fa-chart-pie mr-1"></i>긍부정 분석 "서비스"</div>
+                                    <div class="card-body"><canvas id="myPieChart_Service" width="100%" height="50"></canvas></div>
+                                    <div class="card-footer small text-muted">Updated yesterday at 11:59 PM</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-4">
+                                <div class="card mb-4">
+                                    <div class="card-header"><i class="fas fa-chart-bar mr-1"></i>배송 이슈</div>
+                                    <div class="card-body2" style="text-align : center;"><img src="{{url_for('static',filename='assets/img/d_wc.png')}}" id="deliver_png" alt="My Image" width=300></div>
+                                    <div class="card-footer small text-muted">Updated yesterday at 11:59 PM</div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4">
+                                <div class="card mb-4">
+                                    <div class="card-header"><i class="fas fa-chart-pie mr-1"></i>상품 이슈</div>
+                                    <div class="card-body2" style="text-align : center;"><img src="{{url_for('static',filename='assets/img/p_wc.png')}}" id="product_png" alt="My Image" width=300></div>
+                                    <div class="card-footer small text-muted">Updated yesterday at 11:59 PM</div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4">
+                                <div class="card mb-4">
+                                    <div class="card-header"><i class="fas fa-chart-pie mr-1"></i>서비스 이슈</div>
+                                    <div class="card-body2" style="text-align : center;"><img src="{{url_for('static',filename='assets/img/s_wc.png')}}" id="service_png" alt="My Image" width=300></div>
+                                    <div class="card-footer small text-muted">Updated yesterday at 11:59 PM</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </main>
+                <footer class="py-4 bg-light mt-auto">
+                    <div class="container-fluid">
+                        <div class="d-flex align-items-center justify-content-between small">
+                            <div class="text-muted">Copyright &copy; Your Website 2019</div>
+                            <div>
+                                <a href="#">Privacy Policy</a>
+                                &middot;
+                                <a href="#">Terms &amp; Conditions</a>
+                            </div>
+                        </div>
+                    </div>
+                </footer>
+            </div>
+        </div>
+        <script src="https://code.jquery.com/jquery-3.4.1.min.js" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+        <script src="{{url_for('static',filename='js/scripts.js')}}"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js" crossorigin="anonymous"></script>
+        <script type="text/javascript">
+            var score_lists = {{score_lists}};
+            var score_value = {{score_values}};
+            var deliver_value = {{deliver_values}};
+            var product_value = {{product_values}};
+            var service_value = {{service_values}};
+        </script>
+        <script type="text/javascript" id="barchart" src="/static/assets/demo/chart-bar-demo.js?ver=teamax"></script>
+        <script type="text/javascript" id="deliver_pie" src="/static/assets/demo/chart-pie-deliver.js?ver=teamax"></script>
+        <script type="text/javascript" id="product_pie" src="/static/assets/demo/chart-pie-product.js?ver=teamax"></script>
+        <script type="text/javascript" id="service_pie" src="/static/assets/demo/chart-pie-service.js?ver=teamax"></script>
+        <script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js" crossorigin="anonymous"></script>
+        <script src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js" crossorigin="anonymous"></script>
+        <script src="{{url_for('static',filename='assets/demo/datatables-demo.js')}}"></script>
+        <script>
+            var time    = new Date().getTime();
+            var src_d_png = document.getElementById("deliver_png").src + '?time=' + time;
+            var src_p_png = document.getElementById("product_png").src + '?time=' + time;
+            var src_s_png = document.getElementById("service_png").src + '?time=' + time;
+            $("#deliver_png").attr("src", src_d_png);
+            $("#product_png").attr("src", src_p_png);
+            $("#service_png").attr("src", src_s_png);
+        </script>
+    </body>
+</html>
